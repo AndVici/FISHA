@@ -489,9 +489,16 @@ public class FISHA {
         List<ImageX> images = new ArrayList(), seeds = new ArrayList();
         
         // TODO code application logic here
+        Scanner reader = new Scanner(System.in);
+        System.out.println("Enter Image Set Path: ");
+        String p = reader.nextLine();
+        System.out.println("Enter Image Data Path (ouput from FISHAM): ");
+        String path = reader.nextLine();
+        System.out.println("Enter Desired Output Path: ");
+        String outp = reader.nextLine();
         BufferedImage img = null, img1=null;
-        String p = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\temp";
-        String path = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\FISHA\\test";
+        //String p = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\temp";
+        //String path = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\FISHA\\test";
         
         ImageX compare_image = null;
         File folder = new File(p);
@@ -606,7 +613,7 @@ public class FISHA {
         
         BufferedImage im = null;
         for(int i=0; i<results.size(); i++){
-            String s = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\DBSCAN_1.5_1_1\\cluster"+i;
+            String s = outp +"\\cluster"+i;
             new File(s).mkdirs();
             try{
                 PrintWriter writer = new PrintWriter(s + "greatest distance", "UTF-8");
