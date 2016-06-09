@@ -37,6 +37,25 @@ public class Kmeans {
         }
     }
     
+    public static List<ImageX> seedGen(List<ImageX> img, int k){
+        List<ImageX> seeds = new ArrayList();
+        int[] nums = new int[k];
+        int max = img.size(), ind;
+        Random r = new Random();
+        while(k > 0){
+             ind = r.nextInt(max);
+             if(seeds.contains(img.get(ind)) == false){
+                 nums[k-1] = ind;
+                 seeds.add(img.get(ind));
+                 k--;
+             }
+        }
+        for(int i=0; i < k; i++)
+            img.remove(nums[i]);
+        
+        return seeds;
+    }
+    
     public static List<KCluster> make_clusts(int k, List<ImageX> imgs){
         List<KCluster> clusts = new ArrayList();
         
@@ -55,8 +74,8 @@ public class Kmeans {
         return dist;
     }
     
-    public static List<KCluster> Kmeans(List<ImageX> img, List<ImageX> seeds){
-        
+    public static List<KCluster> Kmeans(List<ImageX> img, int k){
+        List<ImageX> seeds = seedGen(img, k);
         List<KCluster> clusts = make_clusts(seeds.size(), seeds);
         
         for(int i=0; i<img.size(); i++){

@@ -29,8 +29,14 @@ import fisha.Kmeans.*;
  */
 public class FISHA {
     
-    
-   public static List<ODclust> ODClust_make(ImageX comp, List<ImageX> images, Boolean s){
+    /**
+     * 
+     * @param comp
+     * @param images
+     * @param s
+     * @return clusters for one dimentional classification
+     */
+    public static List<ODclust> ODClust_make(ImageX comp, List<ImageX> images, Boolean s){
        List<ODclust> training = new ArrayList();
        ODclust clust;
        for(int i=0; i<images.size(); i++){
@@ -39,7 +45,11 @@ public class FISHA {
        }
        return training;
    }
-    
+    /**
+     * 
+     * @param imag
+     * @return 255 image color set
+     */
      public static Hashtable<String, List<String>> color_set(BufferedImage imag){
          Hashtable<String, List<String>> colors = new Hashtable<String, List<String>>();
          List<String> elem;
@@ -86,6 +96,12 @@ public class FISHA {
          return colors;
      }
      
+     /**
+      * 
+      * @param colors
+      * @param min
+      * @return image colors and their coherence 
+      */
      public static List<Pair<Integer, Integer>> color_coherence_vector(Hashtable<String, List<String>> colors, int min){
          List<Pair<Integer, Integer>> ccvs = new ArrayList();
          
@@ -113,6 +129,12 @@ public class FISHA {
          return ccvs;
      }
      
+     /**
+      * 
+      * @param pixels
+      * @param min
+      * @return amount of coherent pixels
+      */
      public static int coherence(String[] pixels, int min){
          int amount = 0;
          for(int i=0; i<pixels.length; i++){
@@ -164,6 +186,12 @@ public class FISHA {
         imgx.histograms.i_hist = alpha;
      }
      */
+     
+     /**
+      * 
+      * @param h
+      * @return sum of elements in h
+      */
      public static double sum_hist(double[] h){
          double sum = 0;
          for(int i=0; i < h.length; i++){
@@ -171,6 +199,11 @@ public class FISHA {
          }
          return sum;
      }
+     
+     /**
+      * Normalize h
+      * @param h 
+      */
      public static void normalize_hist(double[] h){
          double sum = sum_hist(h);
          
@@ -180,7 +213,12 @@ public class FISHA {
          
      }
     
-    
+    /**
+     * 
+     * @param H - histogram
+     * @param p - index
+     * @return comulative distance from 0 to p
+     */
     public static double comm_dist(double[] H, int p){
         double x = 0;
         for(int i = 0; i < p; i++)
@@ -188,6 +226,12 @@ public class FISHA {
         return x;
     }
     
+    /**
+     * 
+     * @param H1 - histogram
+     * @param H2 - histogram
+     * @return earth movers distance between two histograms
+     */
     public static double EMD(double[]H1, double[]H2){
         double emd = 0;
         for(int i = 0; i<H2.length; i++){
@@ -196,6 +240,12 @@ public class FISHA {
         return emd;
     }
     
+    /**
+     * 
+     * @param H1 - histogram
+     * @param H2 - histogram
+     * @return earth movers distance between two histograms
+     */
     public static double earth_movers_distance(double[] H1, double[] H2){
         int b = H1.length;
         double work = 0;
@@ -227,6 +277,12 @@ public class FISHA {
         return work;
     }
     
+    /**
+     * 
+     * @param H1 - histogram
+     * @param H2 - histogram
+     * @return distance between two histograms
+     */
     public static double L1_dist(double[] H1, double[] H2){
         double dist = 0;
         for(int i = 0; i<H1.length; i++){
@@ -235,6 +291,13 @@ public class FISHA {
         return dist;
     }
     
+    /**
+     * 
+     * @param s - image size
+     * @param H - image x gradient
+     * @param V - image y gradient
+     * @return histogram of image magnitudes
+     */
     public static double[] magnitude(Pair<Integer,Integer> s, BufferedImage H, BufferedImage V){
         int h = s.m, w = s.d;
         double[] mag = new double[256];
@@ -259,12 +322,24 @@ public class FISHA {
         return mag;
     }
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return magnitude at pixel
+     */
     public static double magnitude(double x, double y){
         double mag = 0;
         mag = Math.pow(x, 2) + Math.pow(y, 2);
         return mag;
     }
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return direction at pixel
+     */
     public static double direction(double x, double y){
         double dir = 0;
         dir = Math.atan2(y, x);
@@ -273,6 +348,13 @@ public class FISHA {
         return dir;
     }
     
+    /**
+     * 
+     * @param s
+     * @param H
+     * @param V
+     * @return histogram of image direction
+     */
     public static double[] direction(Pair<Integer,Integer> s, BufferedImage H, BufferedImage V){
         int h = s.m, w = s.d;
         double[] dir = new double[181];
@@ -319,7 +401,12 @@ public class FISHA {
         normalize_hist(HOG);
         return HOG; 
     }
-    
+    /**
+     * 
+     * @param images
+     * @param comp
+     * @return ODclusts
+     */
     public static List<ODclust> make_clusts(List<ImageX> images, ImageX comp){
         List<ODclust> ODCs = new ArrayList();
         ODclust temp;
@@ -336,7 +423,11 @@ public class FISHA {
     /*
    
     */
-    
+    /**
+     * 
+     * @param H
+     * @return a deep copy H
+     */
     public static double[] copyHistogram(double[] H){
         int l = H.length;
         double[] copy = new double[l];
@@ -363,7 +454,11 @@ public class FISHA {
         }
     }
     */
-    
+    /**
+     * 
+     * @param images 
+     * prints the distances between each image
+     */
     public static void print_dist(List<ImageX> images){
         double dist;
         for(int i=0; i<images.size();i++){
@@ -409,7 +504,13 @@ public class FISHA {
             }
         }
     }
-    
+    /**
+     * 
+     * @param x
+     * @param y
+     * @param thresh
+     * @return Histogram of image magnitudes of 3x3 regions
+     */
     public static List<Double> region_magnitude(Raster x, Raster y, double thresh){
         List<Double> edginess = new ArrayList();
         for(int i = 0;i<x.getWidth() ;i+=3){
@@ -433,7 +534,14 @@ public class FISHA {
         }
         return edginess;
     }
-    
+    /**
+     * 
+     * @param H
+     * @param V
+     * @param RGB
+     * @param b
+     * @return ImageX object
+     */
     public static ImageX make_image(BufferedImage H, BufferedImage V, File RGB, BufferedImage b){
         ImageX nw = new ImageX();
         Histograms hi = new Histograms();
@@ -481,6 +589,90 @@ public class FISHA {
         //nw.blur = color_set(b);
         return nw;
     }
+    
+    public static void one_d_class(List<ImageX> images, ImageX compare_image, String p, String outp){
+        
+    }
+    
+    /**
+     * 
+     * @param outp
+     * @param p
+     * @param images
+     * @param k 
+     */
+    public static void kmeans(String outp, String p, List<ImageX> images, int k){
+        List<KCluster> kc = Kmeans.Kmeans(images, k);
+            for(int i=0; i<images.size(); i++){
+                System.out.println(images.get(i).ID);
+                System.out.println();
+                for(int j=0; j<images.get(i).magnitude.size(); j++){
+                    if(images.get(i).magnitude.get(j)!= 0.0)
+                        System.out.println(images.get(i).magnitude.get(j));
+                }
+            }
+           
+            BufferedImage im = null;
+            for(int i=0; i<kc.size(); i++){
+                String s = outp +"\\Kcluster"+i;
+                new File(s).mkdirs();
+                for(int j=0; j<kc.get(i).R.size(); j++){
+                    String str = s + "\\"+ kc.get(i).R.get(j).ID;
+                    try{
+                        im = ImageIO.read(new File(p +"\\"+ kc.get(i).R.get(j).ID));
+                        ImageIO.write(im, "jpg", new File(s +"\\"+ i+j+"c.jpg"));
+
+                    }catch(IOException e){
+                        System.out.println(e);
+                    }
+                }
+            }
+      
+    }
+    /**
+     * 
+     * @param outp
+     * @param p
+     * @param images
+     * @param Eps  minimum distance
+     * @param Minpts minimum points
+     */
+    public static void dbscan(String outp, String p, List<ImageX> images, double Eps, int Minpts){
+        List<DBCluster> results = DBScan.DBSCAN(images, Eps, Minpts
+        );
+        File out;
+        
+        BufferedImage im = null;
+        for(int i=0; i<results.size(); i++){
+            String s = outp +"\\cluster"+i;
+            new File(s).mkdirs();
+            try{
+                PrintWriter writer = new PrintWriter(s + "greatest distance", "UTF-8");
+                writer.println(results.get(i).greatest_distance);
+                writer.close();
+            }catch(IOException e){}
+            for(int j=0; j<results.get(i).core_pnts.size(); j++){
+                String str ="\\"+ results.get(i).core_pnts.get(j).image.ID;
+                try{
+                    im = ImageIO.read(new File(p +str));
+                    ImageIO.write(im, "jpg", new File(s+ str));
+                    
+                }catch(IOException e){
+                    System.out.println(e);
+                }
+            }
+            for(int j=0; j<results.get(i).border_pnts.size(); j++){
+                String str = "\\"+ results.get(i).border_pnts.get(j).image.ID;
+                try{
+                    im = ImageIO.read(new File(p +str));
+                    ImageIO.write(im, "jpg", new File(s + str));
+                    
+                }catch(IOException e){
+                    System.out.println(e);
+                }
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -488,14 +680,58 @@ public class FISHA {
     public static void main(String[] args) {
         List<ImageX> images = new ArrayList(), seeds = new ArrayList();
         
-        // TODO code application logic here
+        int k =0, Minpts = 0;
+        double Eps = 0;
         Scanner reader = new Scanner(System.in);
-        System.out.println("Enter Image Set Path: ");
+        System.out.println("Welcome to FISHA!");
+        System.out.println("please enter image set path: ");
         String p = reader.nextLine();
-        System.out.println("Enter Image Data Path (ouput from FISHAM): ");
+        System.out.println("please enter image set data path (location of ouput from FISHAM): ");
         String path = reader.nextLine();
-        System.out.println("Enter Desired Output Path: ");
+        System.out.println("please enter desired output path: ");
         String outp = reader.nextLine();
+        System.out.println("Please enter an algorithm: ");
+        String inp = reader.nextLine();
+        while(true){
+            if(inp == "dbscan"){
+                System.out.println("Please enter greatest distance: ");
+                try{
+                    Eps = reader.nextDouble();
+            
+                }catch(InputMismatchException e){
+                    System.out.println("Imput must be an number");
+                    continue;
+                }
+                System.out.println("Please enter minimum number of points: ");
+                try{
+                    Minpts = reader.nextInt();
+            
+                }catch(InputMismatchException e){
+                    System.out.println("Imput must be an number");
+                    continue;
+                }
+                break;
+            }
+            else if(inp == "kmeans"){
+                System.out.println("Please enter K: ");
+                try{
+                    k = reader.nextInt();
+            
+                }catch(InputMismatchException e){
+                    System.out.println("Imput must be an number");
+                    continue;
+                }
+                break;
+            }
+            
+            else{
+                System.out.println("Input: 'dbscan' or 'kmeans'");
+                System.out.println("Please enter an algorithm: ");
+                inp = reader.nextLine();
+            }
+        }
+        
+        
         BufferedImage img = null, img1=null;
         //String p = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\temp";
         //String path = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\FISHA\\test";
@@ -535,35 +771,12 @@ public class FISHA {
                 if(ee ==null)
                     images.add(make_image(H, V, rgb, Orig));
             }
-            //List<KCluster> kc = Kmeans.Kmeans(images, seeds);
-            /*
-            for(int i=0; i<images.size(); i++){
-                System.out.println(images.get(i).ID);
-                System.out.println();
-                for(int j=0; j<images.get(i).magnitude.size(); j++){
-                    if(images.get(i).magnitude.get(j)!= 0.0)
-                        System.out.println(images.get(i).magnitude.get(j));
-                }
-            }
-            */
-            /*
-            BufferedImage im = null;
-            for(int i=0; i<kc.size(); i++){
-                String s = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\kmeans\\Kcluster"+i;
-                new File(s).mkdirs();
-                for(int j=0; j<kc.get(i).R.size(); j++){
-                    String str = s + "\\"+ kc.get(i).R.get(j).ID;
-                    try{
-                        im = ImageIO.read(new File(p +"\\"+ kc.get(i).R.get(j).ID));
-                        ImageIO.write(im, "jpg", new File(s +"\\"+ i+j+"c.jpg"));
-
-                    }catch(IOException e){
-                        System.out.println(e);
-                    }
-                }
-            }
-            */
-            /*
+            
+            if(inp == "dbscan")
+                dbscan(outp, p, images, Eps, Minpts);
+            else
+                kmeans(outp, p, images, k);
+                  /*
              List<ODclust> Oclusts = make_clusts(images, compare_image);
              OneDclass.classifier(Oclusts, 2.3);
              BufferedImage im = null;
@@ -608,39 +821,7 @@ public class FISHA {
         //"C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\2_2\\cluster"+i;
         //"C:\Users\willie\Courses\Spring 2016\Principals of Data Mining\Project\15_2"
         
-        List<DBCluster> results = DBScan.DBSCAN(images, 1.5, 1);
-        File out;
         
-        BufferedImage im = null;
-        for(int i=0; i<results.size(); i++){
-            String s = outp +"\\cluster"+i;
-            new File(s).mkdirs();
-            try{
-                PrintWriter writer = new PrintWriter(s + "greatest distance", "UTF-8");
-                writer.println(results.get(i).greatest_distance);
-                writer.close();
-            }catch(IOException e){}
-            for(int j=0; j<results.get(i).core_pnts.size(); j++){
-                String str ="\\"+ results.get(i).core_pnts.get(j).image.ID;
-                try{
-                    im = ImageIO.read(new File(p +str));
-                    ImageIO.write(im, "jpg", new File(s+ str));
-                    
-                }catch(IOException e){
-                    System.out.println(e);
-                }
-            }
-            for(int j=0; j<results.get(i).border_pnts.size(); j++){
-                String str = "\\"+ results.get(i).border_pnts.get(j).image.ID;
-                try{
-                    im = ImageIO.read(new File(p +str));
-                    ImageIO.write(im, "jpg", new File(s + str));
-                    
-                }catch(IOException e){
-                    System.out.println(e);
-                }
-            }
-        }
         
       
         
