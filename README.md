@@ -6,9 +6,7 @@ There are two programs that make up this project. The Matlab program **FISHAM** 
 
 **FISHAM**
 
-Arguments: directory holding JPG images you wish to process.
-
-           Directory to store output.
+Arguments: directory holding JPG images you wish to process and directory to store output.
           
 Returns: Path to output.
 
