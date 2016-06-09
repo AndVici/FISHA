@@ -13,4 +13,4 @@ Returns: Path to output.
 
 **FISHA**
 
-In main you must give the output directory from **FISHAM** and the desired output directory for the results.
+In main you must give the directory holding the JPG images, the output directory from **FISHAM** and the desired output directory for the results.
