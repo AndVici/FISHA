@@ -1,14 +1,14 @@
-function [ file_path ] = main( file_path )
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+function [ path ] = main( file_path, path )
+%FISHAM: for FISHA
+%   file_path = directory with jpg images
+%   path = directory to stor output for FISHA
+%   returns image gradients, RGB histograms, and blur
 
 addpath(file_path);
 F = fullfile(file_path, '*.jpg');
-path = 'C:\Users\willie\Courses\Spring 2016\Principals of Data Mining\Project\FISHA\test\';
 files = dir(F);
 
 for i = 1:length(files)
-   % fprintf('file = %s\n', files(i).name);
     im = imread(files(i).name);
     [row, col, CC] = size(im);
     if row > 1000
