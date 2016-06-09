@@ -10,7 +10,19 @@ Arguments: directory holding JPG images you wish to process and directory to sto
           
 Returns: Path to output.
 
+For each image int the directory, this program returns a horizontal and vertical gradient, an RGB histogram, and a blurred image.
+
 
 **FISHA**
 
 In main you must give the directory holding the JPG images, the output directory from **FISHAM** and the desired output directory for the results.
+
+This program finds a similarity between images based on:
+
+* texture distribution
+* RGB distribution
+* color coherence vectors
+
+and uses the L1 distance metric, and DBSCAN.
+
+Please refer to FISHA_.pdf for a full report and results.
