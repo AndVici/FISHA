@@ -2,7 +2,7 @@
 FINDING IMAGE SIMILARITY: HISTOGRAM ANALYSIS
 ============================================
 
-There are two programs that make up this project. The Matlab program **FISHAM** and the Java program **FISHA**. These programs must be run sequentially and in order.
+There are two programs that make up this project. The Matlab program **FISHAM** and the Java program **FISHAJ**. These programs must be run sequentially and in order.
 
 **FISHAM**
 
@@ -13,7 +13,7 @@ Returns: Path to output.
 For each image int the directory, this program returns a horizontal and vertical gradient, an RGB histogram, and a blurred image.
 
 
-**FISHA**
+**FISHAJ**
 
 In main you must give the directory holding the JPG images, the output directory from **FISHAM** and the desired output directory for the results.
 
