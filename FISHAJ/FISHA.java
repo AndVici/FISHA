@@ -34,7 +34,7 @@ public class FISHA {
      * @param comp
      * @param images
      * @param s
-     * @return clusters for one dimentional classification
+     * @return clusters for one dimensional classification
      */
     public static List<ODclust> ODClust_make(ImageX comp, List<ImageX> images, Boolean s){
        List<ODclust> training = new ArrayList();
@@ -590,8 +590,62 @@ public class FISHA {
         return nw;
     }
     
-    public static void one_d_class(List<ImageX> images, ImageX compare_image, String p, String outp){
-        
+    /**
+     * 
+     * @param images
+     * @param compare_image
+     * @param outp
+     * @param p
+     * @param threshold 
+     */
+    public static void classify(List<ImageX> images, ImageX compare_image, String outp, String p, double threshold){
+        List<ODclust> odc = make_clusts(images, compare_image);
+        OneDclass.classifier(odc, threshold);
+        BufferedImage im = null;
+        for (int i = 0; i < odc.size(); i++) {
+            if (odc.get(i).similar == true) {
+                try {
+                    im = ImageIO.read(new File(p + "\\" + odc.get(i).ID));
+                    ImageIO.write(im, "jpg", new File(outp + "\\" + i + "c.jpg"));
+
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param images
+     * @param n number of observations
+     */
+    public static void one_d_class(List<ImageX> images, int n){
+        List<ODclust> odc = new ArrayList(), temp;
+        List<Double> best_best = new ArrayList();
+        int a=0, b;
+        for(int i=0; i<n; i++){
+            b = images.indexOf(null);
+            temp = ODClust_make(images.get(a), images.subList(a, b), true);
+            odc.addAll(temp);
+            temp = ODClust_make(images.get(a), images.subList(b+1, images.size()), false);
+            odc.addAll(temp);
+            List<Double> thresh = OneDclass.OD_classification(odc, 0, 0.1, 10);
+            double best_thresh = 0;
+            for(int j=0; j<thresh.size(); j++){
+                best_thresh+=thresh.get(j);
+            }
+            best_best.add(best_thresh/thresh.size());
+            images.remove(b);
+            a=b;
+        }
+        double best_best_thresh = 0;
+        for(int i=0; i<best_best.size(); i++){
+            best_best_thresh+=best_best.get(i);
+        }
+        best_best_thresh = best_best_thresh/best_best.size();
+        System.out.print("Best Threshold: ");
+        System.out.println(best_best_thresh);
     }
     
     /**
@@ -673,27 +727,75 @@ public class FISHA {
             }
         }
     }
+    
+    public static ImageX get_images(List<ImageX> images, String path, String p, String compare){
+        ImageX com_i = new ImageX(), temp;
+        
+        File folder = new File(p);
+        File[] filelist = folder.listFiles();
+        BufferedImage H = null, V = null, Orig = null;
+        File rgb = null;
+        String h, v, csv, f;
+       
+        
+        for(int i=0; i < filelist.length; i++){
+            h = path + "\\" + filelist[i].getName() + "_H.png";
+            v = path + "\\" +  filelist[i].getName() + "_V.png";
+            csv = path + "\\" + filelist[i].getName() + "_RGB_h.csv";
+            f = path + "\\" + filelist[i].getName() + "_blur.png";
+            String ee = null;
+            try{
+                H = ImageIO.read(new File(h));
+                V = ImageIO.read(new File(v));
+                rgb = new File(csv);
+                Orig = ImageIO.read(new File(f));
+
+            }catch(IOException e){
+                if(compare == filelist[i].toString()){
+                    System.out.println("Could not retrieve compare image");
+                    System.exit(0);
+                }
+                continue;
+            }
+                
+            if(ee ==null){
+                temp = make_image(H, V, rgb, Orig);
+                if(compare.equals(filelist[i].toString()))
+                    com_i = temp;
+                else
+                    images.add(temp);
+            }
+        }
+        return com_i;
+    }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         List<ImageX> images = new ArrayList(), seeds = new ArrayList();
-        
-        int k =0, Minpts = 0;
-        double Eps = 0;
+        List<String> comp_imgs = new ArrayList(), compare_imgsp = new ArrayList();
+        int k =0, Minpts = 0, n=1;
+        double Eps = 0, threshold=2.3;
         Scanner reader = new Scanner(System.in);
+        ImageX compar_image = null;
+
         System.out.println("Welcome to FISHA!");
-        System.out.println("please enter image set path: ");
-        String p = reader.nextLine();
-        System.out.println("please enter image set data path (location of ouput from FISHAM): ");
-        String path = reader.nextLine();
-        System.out.println("please enter desired output path: ");
-        String outp = reader.nextLine();
+        
+        String p = "",path = "", outp="", compare_image="", ans="";
+        
         System.out.println("Please enter an algorithm: ");
         String inp = reader.nextLine();
         while(true){
-            if(inp == "dbscan"){
+            if(inp.equals("dbscan")){
+                if(outp.equals("")){
+                    System.out.println("please enter image set path: ");
+                    p = reader.nextLine();
+                    System.out.println("please enter image set data path (location of ouput from FISHAM): ");
+                    path = reader.nextLine();
+                    System.out.println("please enter desired output path: ");
+                    outp = reader.nextLine();
+                }
                 System.out.println("Please enter greatest distance: ");
                 try{
                     Eps = reader.nextDouble();
@@ -712,7 +814,15 @@ public class FISHA {
                 }
                 break;
             }
-            else if(inp == "kmeans"){
+            else if(inp.equals("kmeans")){
+                if(outp.equals("")){
+                    System.out.println("please enter image set path: ");
+                    p = reader.nextLine();
+                    System.out.println("please enter image set data path (location of ouput from FISHAM): ");
+                    path = reader.nextLine();
+                    System.out.println("please enter desired output path: ");
+                    outp = reader.nextLine();
+                }
                 System.out.println("Please enter K: ");
                 try{
                     k = reader.nextInt();
@@ -723,111 +833,95 @@ public class FISHA {
                 }
                 break;
             }
+            else if(inp.equals("classify")){
+                if(ans.equals("y") || ans.equals("yes")){
+                    System.out.println("Please enter threshold: ");
+                    try{
+                        threshold = reader.nextDouble();
+            
+                    }catch(InputMismatchException e){
+                        System.out.println("Imput must be an number");
+                        continue;
+                    }
+                    break;
+                }
+                System.out.println("please enter comparison image path: ");
+                compare_image = reader.nextLine();
+                System.out.println("please enter image set path: ");
+                p = reader.nextLine();
+                System.out.println("please enter image set data path (location of ouput from FISHAM): ");
+                path = reader.nextLine();
+                System.out.println("please enter desired output path: ");
+                outp = reader.nextLine();
+                System.out.println("Do you want to set a threshold? ");
+                ans = reader.nextLine();
+                if(ans.equals("y") || ans.equals("yes")){
+                    System.out.println("Please enter threshold: ");
+                    try{
+                        threshold = reader.nextDouble();
+            
+                    }catch(InputMismatchException e){
+                        System.out.println("Imput must be an number");
+                        continue;
+                    }
+                    break;
+                }
+                
+            }
+            else if(inp.equals("1D classification")){
+                System.out.println("Please enter number of observations: ");
+                try{
+                    n = reader.nextInt();
+            
+                }catch(InputMismatchException e){
+                    System.out.println("Imput must be an number");
+                    continue;
+                }
+                for(int i=0; i<n; i++){
+                    System.out.println("Please enter path to set of similar images");
+                    String imag = reader.nextLine();
+                    imag.replace("\\", "\\\\");
+                    comp_imgs.add(imag);
+                    System.out.println("Please enter path to set of similar images data (FISHAM output): ");
+                    compare_imgsp.add(reader.nextLine().replaceAll("\\", "\\\\"));
+                }
+                System.out.println("please enter desired output path: ");
+                outp = reader.nextLine();
+                break;
+            }
             
             else{
-                System.out.println("Input: 'dbscan' or 'kmeans'");
+                System.out.println("Input: 'dbscan' or 'kmeans' or 'classify' or '1D classification'");
                 System.out.println("Please enter an algorithm: ");
                 inp = reader.nextLine();
             }
         }
         
         
-        BufferedImage img = null, img1=null;
-        //String p = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\temp";
-        //String path = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\FISHA\\test";
-        
-        ImageX compare_image = null;
-        File folder = new File(p);
-        File[] filelist = folder.listFiles();
-        BufferedImage H = null, V = null, Orig = null;
-        File rgb = null;
-        String h, v, csv, f;
-        List<Double> best_best = new ArrayList();
-        List<String> seed_names = new ArrayList();
-        
-        
-        //String comp_img = "sts126-s-005_9368755048_o.jpg";
-        //String[] comp_imgs = {"earth-15.jpg","GC-4.jpg","nasas-goddard-space-flight-center_22008598630_o.jpg","oil-slick-in-the-gulf-of-mexico-june-10th-view_4690188789_o.jpg"};
-        //for(int j=0; j<comp_imgs.length; j++){
-            //images.clear();
-            for(int i=0; i < filelist.length; i++){
-                h = path + "\\" + filelist[i].getName() + "_H.png";
-                v = path + "\\" +  filelist[i].getName() + "_V.png";
-                csv = path + "\\" + filelist[i].getName() + "_RGB_h.csv";
-                f = path + "\\" + filelist[i].getName() + "_blur.png";
-                String ee = null;
-                try{
-                    H = ImageIO.read(new File(h));
-                    V = ImageIO.read(new File(v));
-                    rgb = new File(csv);
-                    Orig = ImageIO.read(new File(f));
-
-                }catch(IOException e){
-                    continue;
-                }
-                //if(ee == null && seed_names.contains(filelist[i].getName()))
-                  // seeds.add(make_image(H, V, rgb, Orig));
-
-                if(ee ==null)
-                    images.add(make_image(H, V, rgb, Orig));
-            }
+        p.replace("\\", "\\\\");
+        outp.replace("\\", "\\\\");
+        path.replace("\\", "\\\\");
+        compare_image.replace("\\", "\\\\");
             
-            if(inp == "dbscan")
-                dbscan(outp, p, images, Eps, Minpts);
-            else
-                kmeans(outp, p, images, k);
-                  /*
-             List<ODclust> Oclusts = make_clusts(images, compare_image);
-             OneDclass.classifier(Oclusts, 2.3);
-             BufferedImage im = null;
-             String s = "C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\similar\\"+comp_img;
-             new File(s).mkdirs();
-             for(int i=0; i<Oclusts.size(); i++){
-                 if(Oclusts.get(i).similar == true){
-                     try{
-                        im = ImageIO.read(new File(p +"\\"+ Oclusts.get(i).ID));
-                        ImageIO.write(im, "jpg", new File(s +"\\"+ i+"c.jpg"));
-                    
-                }catch(IOException e){
-                    System.out.println(e);
-                }
-                 }
-             }
-             */
-            /*
-            List<ODclust> Oclusts = make_clusts(images, comp_img);
-            List<Double> thresh = OneDclass.OD_classification(Oclusts, 0, 0.01, 10);
-            double best_thresh = 0;
-            
-            for(int i=0; i<thresh.size(); i++){
-                best_thresh+=thresh.get(i);
+        if(inp.equals("dbscan")){
+            get_images(images, path, p, compare_image);
+            dbscan(outp, p, images, Eps, Minpts);
+        }
+        else if(inp.equals("kmeans")){
+            get_images(images, path, p, compare_image);
+            kmeans(outp, p, images, k);
+        }
+        else if(inp.equals("classify")){
+            compar_image = get_images(images, path, p, compare_image);
+            classify(images, compar_image, outp, p,threshold);
+        }
+        else if(inp.equals("1D classification")){
+            for(int i=0; i<n; i++){
+                get_images(images, comp_imgs.get(i), compare_imgsp.get(i), compare_image);
+                ImageX boarder = null;
+                images.add(boarder);
             }
-            best_thresh = best_thresh/thresh.size();
-            System.out.println(best_thresh);
-            best_best.add(best_thresh);
-            */
-        //}
-        /*
-        double best_best_thresh = 0;
-        for(int i=0; i<best_best.size(); i++){
-                best_best_thresh+=best_best.get(i);
-            }
-        best_best_thresh = best_best_thresh/best_best.size();
-        System.out.println(best_best_thresh);
-        */
-        //print_dist(images);
-        //"C:\Users\willie\Courses\Spring 2016\Principals of Data Mining\Project\init_clusts"
-        //C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\clusters\\cluster"+i
-        //"C:\\Users\\willie\\Courses\\Spring 2016\\Principals of Data Mining\\Project\\2_2\\cluster"+i;
-        //"C:\Users\willie\Courses\Spring 2016\Principals of Data Mining\Project\15_2"
-        
-        
-        
-      
-        
-//        print_dist(images);
-        
-//        System.out.println();
+        }
        
  
         
