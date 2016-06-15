@@ -2,6 +2,8 @@
 FINDING IMAGE SIMILARITY: HISTOGRAM ANALYSIS
 ============================================
 
+FISHA is a program that allows the user to find an optimal similarity index for images. FISHA can return all images "similar" to a given image in a directory; or, FISHA can seperate all images in a directory into clusters by "similarity."
+
 There are two programs that make up this project. The Matlab program **FISHAM** and the Java program **FISHAJ**. These programs must be run sequentially and in order.
 
 **FISHAM**
